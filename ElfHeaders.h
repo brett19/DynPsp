@@ -40,6 +40,14 @@ struct elf_programheader {
 	unsigned int mAlign;
 };
 
+enum elf_sectionheader_type {
+	SHT_NULL = 0x00000000,
+	SHT_PROGBITS = 0x00000001,
+	SHT_STRTAB = 0x00000003,
+	SHT_NOBITS = 0x00000008,
+	SHT_PRXREL = 0x700000A0,
+};
+
 struct elf_sectionheader {
 	unsigned int mName;
 	unsigned int mType;
@@ -51,6 +59,14 @@ struct elf_sectionheader {
 	unsigned int mInfo;
 	unsigned int mAddressAlign;
 	unsigned int mEntrySize;
+};
+
+struct elf_relocation {
+	unsigned int mOffset;
+	unsigned char mType;
+	unsigned char mOffsetBase;
+	unsigned char mAddrBase;
+	unsigned char mUnknown;	
 };
 
 #pragma pack(pop)

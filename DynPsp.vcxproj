@@ -76,12 +76,15 @@
   <ItemGroup>
     <ClCompile Include="DynPsp.cpp" />
     <ClCompile Include="ElfLoader.cpp" />
+    <ClCompile Include="MipsDisassembler.cpp" />
     <ClCompile Include="pspMemory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ElfHeaders.h" />
     <ClInclude Include="ElfLoader.hpp" />
     <ClInclude Include="ExecDynarec.hpp" />
+    <ClInclude Include="MipsDisassembler.hpp" />
+    <ClInclude Include="MipsOpcodes.h" />
     <ClInclude Include="pspMemory.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
