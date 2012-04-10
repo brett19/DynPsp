@@ -27,6 +27,12 @@
     <ClCompile Include="MipsDisassembler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DynarecContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DynarecExec.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pspMemory.hpp">
@@ -38,13 +44,19 @@
     <ClInclude Include="ElfHeaders.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ExecDynarec.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MipsDisassembler.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MipsOpcodes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DynarecContext.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DynarecExec.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="X86Assembler.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

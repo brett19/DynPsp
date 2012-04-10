@@ -2,38 +2,80 @@
 
 #include "MipsOpcodes.h"
 
-enum mips_instruction_type
-{
-	XIT_UNKNOWN,
-	XIT_SPECIAL,
-	XIT_IMMEDIATE,
-	XIT_BRANCH,
-	XIT_JUMP,
-	XIT_SYS,
-	XIT_NOP
+enum mips_instruction_type {
+	ALGXINS_NOP         , ALGXINS_ADD         , ALGXINS_ADDI        , ALGXINS_ADDIU       , ALGXINS_ADDU        , ALGXINS_AND         , ALGXINS_ANDI        , ALGXINS_BEQ         , 
+	ALGXINS_BEQL        , ALGXINS_BGEZ        , ALGXINS_BGEZAL      , ALGXINS_BGEZL       , ALGXINS_BGTZ        , ALGXINS_BGTZL       , ALGXINS_BITREV      , ALGXINS_BLEZ        , 
+	ALGXINS_BLEZL       , ALGXINS_BLTZ        , ALGXINS_BLTZAL      , ALGXINS_BLTZALL     , ALGXINS_BLTZL       , ALGXINS_BNE         , ALGXINS_BNEL        , ALGXINS_BREAK       , 
+	ALGXINS_CACHE       , ALGXINS_CFC0        , ALGXINS_CLO         , ALGXINS_CLZ         , ALGXINS_CTC0        , ALGXINS_DBREAK      , ALGXINS_DIV         , ALGXINS_DIVU        , 
+	ALGXINS_DRET        , ALGXINS_ERET        , ALGXINS_EXT         , ALGXINS_HALT        , ALGXINS_INS         , ALGXINS_J           , ALGXINS_JAL         , ALGXINS_JALR        , 
+	ALGXINS_JR          , ALGXINS_LB          , ALGXINS_LBU         , ALGXINS_LH          , ALGXINS_LHU         , ALGXINS_LL          , ALGXINS_LUI         , ALGXINS_LW          , 
+	ALGXINS_LWL         , ALGXINS_LWR         , ALGXINS_MADD        , ALGXINS_MADDU       , ALGXINS_MAX         , ALGXINS_MFC0        , ALGXINS_MFDR        , ALGXINS_MFHI        , 
+	ALGXINS_MFIC        , ALGXINS_MFLO        , ALGXINS_MIN         , ALGXINS_MOVN        , ALGXINS_MOVZ        , ALGXINS_MSUB        , ALGXINS_MSUBU       , ALGXINS_MTC0        , 
+	ALGXINS_MTDR        , ALGXINS_MTHI        , ALGXINS_MTIC        , ALGXINS_MTLO        , ALGXINS_MULT        , ALGXINS_MULTU       , ALGXINS_NOR         , ALGXINS_OR          , 
+	ALGXINS_ORI         , ALGXINS_ROTR        , ALGXINS_ROTRV       , ALGXINS_SB          , ALGXINS_SEB         , ALGXINS_SEH         , ALGXINS_SH          , ALGXINS_SLL         , 
+	ALGXINS_SLLV        , ALGXINS_SLT         , ALGXINS_SLTI        , ALGXINS_SLTIU       , ALGXINS_SLTU        , ALGXINS_SRA         , ALGXINS_SRAV        , ALGXINS_SRL         , 
+	ALGXINS_SRLV        , ALGXINS_SUB         , ALGXINS_SUBU        , ALGXINS_SW          , ALGXINS_SWL         , ALGXINS_SWR         , ALGXINS_SYNC        , ALGXINS_SYSCALL     , 
+	ALGXINS_WSBH        , ALGXINS_WSBW        , ALGXINS_XOR         , ALGXINS_XORI        , ALGXINS_ABS_S       , ALGXINS_ADD_S       , ALGXINS_BC1F        , ALGXINS_BC1FL       , 
+	ALGXINS_BC1T        , ALGXINS_BC1TL       , ALGXINS_C_EQ_S      , ALGXINS_C_F_S       , ALGXINS_C_LE_S      , ALGXINS_C_LT_S      , ALGXINS_C_NGE_S     , ALGXINS_C_NGL_S     , 
+	ALGXINS_C_NGLE_S    , ALGXINS_C_NGT_S     , ALGXINS_C_OLE_S     , ALGXINS_C_OLT_S     , ALGXINS_C_SEQ_S     , ALGXINS_C_SF_S      , ALGXINS_C_UEQ_S     , ALGXINS_C_ULE_S     , 
+	ALGXINS_C_ULT_S     , ALGXINS_C_UN_S      , ALGXINS_CEIL_W_S    , ALGXINS_CFC1        , ALGXINS_CTC1        , ALGXINS_CVT_S_W     , ALGXINS_CVT_W_S     , ALGXINS_DIV_S       , 
+	ALGXINS_FLOOR_W_S   , ALGXINS_LWC1        , ALGXINS_MFC1        , ALGXINS_MOV_S       , ALGXINS_MTC1        , ALGXINS_MUL_S       , ALGXINS_NEG_S       , ALGXINS_ROUND_W_S   , 
+	ALGXINS_SQRT_S      , ALGXINS_SUB_S       , ALGXINS_SWC1        , ALGXINS_TRUNC_W_S   , ALGXINS_BVF         , ALGXINS_BVFL        , ALGXINS_BVT         , ALGXINS_BVTL        , 
+	ALGXINS_LV_Q        , ALGXINS_LV_S        , ALGXINS_LVL_Q       , ALGXINS_LVR_Q       , ALGXINS_MFV         , ALGXINS_MFVC        , ALGXINS_MFVME       , ALGXINS_MTV         , 
+	ALGXINS_MTVC        , ALGXINS_MTVME       , ALGXINS_SV_Q        , ALGXINS_SV_S        , ALGXINS_SVL_Q       , ALGXINS_SVR_Q       , ALGXINS_VABS        , ALGXINS_VADD        , 
+	ALGXINS_VASIN       , ALGXINS_VAVG        , ALGXINS_VBFY1       , ALGXINS_VBFY2       , ALGXINS_VCMOVF      , ALGXINS_VCMOVT      , ALGXINS_VCMP        , ALGXINS_VCOS        , 
+	ALGXINS_VCRS_T      , ALGXINS_VCRSP_T     , ALGXINS_VCST        , ALGXINS_VDET_P      , ALGXINS_VDIV        , ALGXINS_VDOT        , ALGXINS_VEXP2_P     , ALGXINS_VEXP2_Q     , 
+	ALGXINS_VEXP2_S     , ALGXINS_VEXP2_T     , ALGXINS_VF2H_P      , ALGXINS_VF2H_Q      , ALGXINS_VF2ID_P     , ALGXINS_VF2ID_Q     , ALGXINS_VF2ID_S     , ALGXINS_VF2ID_T     , 
+	ALGXINS_VF2IN_P     , ALGXINS_VF2IN_Q     , ALGXINS_VF2IN_S     , ALGXINS_VF2IN_T     , ALGXINS_VF2IU_P     , ALGXINS_VF2IU_Q     , ALGXINS_VF2IU_S     , ALGXINS_VF2IU_T     , 
+	ALGXINS_VF2IZ_P     , ALGXINS_VF2IZ_Q     , ALGXINS_VF2IZ_S     , ALGXINS_VF2IZ_T     , ALGXINS_VFAD_P      , ALGXINS_VFAD_Q      , ALGXINS_VFAD_T      , ALGXINS_VFIM_S      , 
+	ALGXINS_VFLUSH      , ALGXINS_VH2F_P      , ALGXINS_VH2F_S      , ALGXINS_VHDP_P      , ALGXINS_VHDP_Q      , ALGXINS_VHDP_T      , ALGXINS_VHTFM2_P    , ALGXINS_VHTFM3_T    , 
+	ALGXINS_VHTFM4_Q    , ALGXINS_VI2C_Q      , ALGXINS_VI2F_P      , ALGXINS_VI2F_Q      , ALGXINS_VI2F_S      , ALGXINS_VI2F_T      , ALGXINS_VI2S_P      , ALGXINS_VI2S_Q      , 
+	ALGXINS_VI2UC_Q     , ALGXINS_VI2US_P     , ALGXINS_VI2US_Q     , ALGXINS_VIDT_P      , ALGXINS_VIDT_Q      , ALGXINS_VIIM_S      , ALGXINS_VLGB_S      , ALGXINS_VLOG2_P     , 
+	ALGXINS_VLOG2_Q     , ALGXINS_VLOG2_S     , ALGXINS_VLOG2_T     , ALGXINS_VMAX_P      , ALGXINS_VMAX_Q      , ALGXINS_VMAX_S      , ALGXINS_VMAX_T      , ALGXINS_VMFVC       , 
+	ALGXINS_VMIDT_P     , ALGXINS_VMIDT_Q     , ALGXINS_VMIDT_T     , ALGXINS_VMIN_P      , ALGXINS_VMIN_Q      , ALGXINS_VMIN_S      , ALGXINS_VMIN_T      , ALGXINS_VMMOV_P     , 
+	ALGXINS_VMMOV_Q     , ALGXINS_VMMOV_T     , ALGXINS_VMMUL_P     , ALGXINS_VMMUL_Q     , ALGXINS_VMMUL_T     , ALGXINS_VMONE_P     , ALGXINS_VMONE_Q     , ALGXINS_VMONE_T     , 
+	ALGXINS_VMOV_P      , ALGXINS_VMOV_Q      , ALGXINS_VMOV_S      , ALGXINS_VMOV_T      , ALGXINS_VMSCL_P     , ALGXINS_VMSCL_Q     , ALGXINS_VMSCL_T     , ALGXINS_VMTVC       , 
+	ALGXINS_VMUL_P      , ALGXINS_VMUL_Q      , ALGXINS_VMUL_S      , ALGXINS_VMUL_T      , ALGXINS_VMZERO_P    , ALGXINS_VMZERO_Q    , ALGXINS_VMZERO_T    , ALGXINS_VNEG_P      , 
+	ALGXINS_VNEG_Q      , ALGXINS_VNEG_S      , ALGXINS_VNEG_T      , ALGXINS_VNOP        , ALGXINS_VNRCP_P     , ALGXINS_VNRCP_Q     , ALGXINS_VNRCP_S     , ALGXINS_VNRCP_T     , 
+	ALGXINS_VNSIN_P     , ALGXINS_VNSIN_Q     , ALGXINS_VNSIN_S     , ALGXINS_VNSIN_T     , ALGXINS_VOCP_P      , ALGXINS_VOCP_Q      , ALGXINS_VOCP_S      , ALGXINS_VOCP_T      , 
+	ALGXINS_VONE        , ALGXINS_VPFXD       , ALGXINS_VPFXS       , ALGXINS_VPFXT       , ALGXINS_VQMUL       , ALGXINS_VRCP        , ALGXINS_VREXP2_P    , ALGXINS_VREXP2_Q    , 
+	ALGXINS_VREXP2_S    , ALGXINS_VREXP2_T    , ALGXINS_VRNDF1_P    , ALGXINS_VRNDF1_Q    , ALGXINS_VRNDF1_S    , ALGXINS_VRNDF1_T    , ALGXINS_VRNDF2_P    , ALGXINS_VRNDF2_Q    , 
+	ALGXINS_VRNDF2_S    , ALGXINS_VRNDF2_T    , ALGXINS_VRNDI_P     , ALGXINS_VRNDI_Q     , ALGXINS_VRNDI_S     , ALGXINS_VRNDI_T     , ALGXINS_VRNDS_S     , ALGXINS_VROT_P      , 
+	ALGXINS_VROT_Q      , ALGXINS_VROT_T      , ALGXINS_VRSQ_P      , ALGXINS_VRSQ_Q      , ALGXINS_VRSQ_S      , ALGXINS_VRSQ_T      , ALGXINS_VS2I_P      , ALGXINS_VS2I_S      , 
+	ALGXINS_VSAT0_P     , ALGXINS_VSAT0_Q     , ALGXINS_VSAT0_S     , ALGXINS_VSAT0_T     , ALGXINS_VSAT1_P     , ALGXINS_VSAT1_Q     , ALGXINS_VSAT1_S     , ALGXINS_VSAT1_T     , 
+	ALGXINS_VSBN_S      , ALGXINS_VSBZ_S      , ALGXINS_VSCL_P      , ALGXINS_VSCL_Q      , ALGXINS_VSCL_T      , ALGXINS_VSCMP_P     , ALGXINS_VSCMP_Q     , ALGXINS_VSCMP_S     , 
+	ALGXINS_VSCMP_T     , ALGXINS_VSGE_P      , ALGXINS_VSGE_Q      , ALGXINS_VSGE_S      , ALGXINS_VSGE_T      , ALGXINS_VSGN_P      , ALGXINS_VSGN_Q      , ALGXINS_VSGN_S      , 
+	ALGXINS_VSGN_T      , ALGXINS_VSIN_P      , ALGXINS_VSIN_Q      , ALGXINS_VSIN_S      , ALGXINS_VSIN_T      , ALGXINS_VSLT_P      , ALGXINS_VSLT_Q      , ALGXINS_VSLT_S      , 
+	ALGXINS_VSLT_T      , ALGXINS_VSOCP_P     , ALGXINS_VSOCP_S     , ALGXINS_VSQRT_P     , ALGXINS_VSQRT_Q     , ALGXINS_VSQRT_S     , ALGXINS_VSQRT_T     , ALGXINS_VSRT1_Q     , 
+	ALGXINS_VSRT2_Q     , ALGXINS_VSRT3_Q     , ALGXINS_VSRT4_Q     , ALGXINS_VSUB_P      , ALGXINS_VSUB_Q      , ALGXINS_VSUB_S      , ALGXINS_VSUB_T      , ALGXINS_VSYNC       , 
+	ALGXINS_VT4444_Q    , ALGXINS_VT5551_Q    , ALGXINS_VT5650_Q    , ALGXINS_VTFM2_P     , ALGXINS_VTFM3_T     , ALGXINS_VTFM4_Q     , ALGXINS_VUS2I_P     , ALGXINS_VUS2I_S     , 
+	ALGXINS_VWB_Q       , ALGXINS_VWBN_S      , ALGXINS_VZERO       
 };
 
-enum mips_instruction_opusage
+enum mips_instruction_fmt
 {
-	XOU_NONE = 1,
-	XOU_RS  = 2,
-	XOU_RSBASE = 4,
-	XOU_RT  = 8,
-	XOU_RD = 16,
-	XOU_SA = 32,
-	XOU_IMM = 64,
-	XOU_IMMJMP = 128,
-	XOU_CODE = 256
+	IFMT_DUNNO,
+	IFMT_NOPOP,
+	IFMT_ALIMM,
+	IFMT_ALREG,
+	IFMT_ALSYS,
+	IFMT_ALJMP,
+	IFMT_VPRG1,
+	IFMT_VPRG2,
+	IFMT_VPIM1,
+	IFMT_VPIM2,
+	IFMT_VPIM3,
+	IFMT_VPIM4,
+	IFMT_VPIM5,
 };
 
-struct mips_instruction
+struct mips_instruction_info
 {
-	unsigned int mask;
-	unsigned int compare;
 	mips_instruction_type type;
+	unsigned int mask;
+	unsigned int cmp;
+	mips_instruction_fmt fmt;
 	const char* name;
-	unsigned int opusage;
 };
 
-const mips_instruction& mdDisassemble( unsigned int inst );
-void mdPrint( const mips_instruction& ins_data, unsigned int inst, unsigned int loc );
+const mips_instruction_info* mdDisassemble( unsigned int inst );

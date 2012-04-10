@@ -8,151 +8,389 @@ static const char* REG_NAME[] = {
 	"t8","t9","k0","k1","gp","sp","fp","ra"
 };
 
-static const mips_instruction g_xUnknownIns = { 0x00000000, 0x00000000, XIT_UNKNOWN, "UNK" };
-static const mips_instruction g_xMipsIns[] = {
-	{ 0xFFFFFFFF, 0x00000000, XIT_NOP,			"NOP",		XOU_NONE },
-	{ 0xFC00003F, 0x00000020, XIT_SPECIAL,		"ADD",		XOU_RS|XOU_RT|XOU_RD },
-	{ 0xFC000000, 0x20000000, XIT_IMMEDIATE,	"ADDI",		XOU_RS|XOU_RT|XOU_IMM },
-	{ 0xFC000000, 0x24000000, XIT_IMMEDIATE,	"ADDIU",	XOU_RS|XOU_RT|XOU_IMM },
-	{ 0xFC00003F, 0x00000021, XIT_SPECIAL,		"ADDU",		XOU_RS|XOU_RT|XOU_RD },
-	{ 0xFC00003F, 0x00000024, XIT_SPECIAL,		"AND",		XOU_RS|XOU_RT|XOU_RD },
-	{ 0xFC000000, 0x30000000, XIT_IMMEDIATE,	"ANDI",		XOU_RS|XOU_RT|XOU_IMM },
-	// BCzF
-	// BCzFL	// BCzT
-	// BCzTL
-	{ 0xFC000000, 0x10000000, XIT_IMMEDIATE,	"BEQ",		XOU_RS|XOU_RT|XOU_IMMJMP },
-	{ 0xFC000000, 0x50000000, XIT_IMMEDIATE,	"BEQL",		XOU_RS|XOU_RT|XOU_IMMJMP },
-	{ 0xFC1F0000, 0x04010000, XIT_BRANCH,		"BGEZ",		XOU_RS|XOU_IMMJMP },
-	{ 0xFC1F0000, 0x04110000, XIT_BRANCH,		"BGEZAL",	XOU_RS|XOU_IMMJMP },
-	{ 0xFC1F0000, 0x04130000, XIT_BRANCH,		"BGEZALL",	XOU_RS|XOU_IMMJMP },
-	{ 0xFC1F0000, 0x04030000, XIT_BRANCH,		"BGEZL",	XOU_RS|XOU_IMMJMP },
-	{ 0xFC000000, 0x1c000000, XIT_BRANCH,		"BGTZ",		XOU_RS|XOU_IMMJMP },
-	{ 0xFC000000, 0x5c000000, XIT_BRANCH,		"BGTZL",	XOU_RS|XOU_IMMJMP },
-	{ 0xFC000000, 0x18000000, XIT_BRANCH,		"BLEZ",		XOU_RS|XOU_IMMJMP },
-	{ 0xFC000000, 0x58000000, XIT_BRANCH,		"BLEZL",	XOU_RS|XOU_IMMJMP },
-	{ 0xFC1F0000, 0x04000000, XIT_BRANCH,		"BLTZ",		XOU_RS|XOU_IMMJMP },
-	{ 0xFC1F0000, 0x04100000, XIT_BRANCH,		"BLTZAL",	XOU_RS|XOU_IMMJMP },
-	{ 0xFC1F0000, 0x04120000, XIT_BRANCH,		"BLTZALL",	XOU_RS|XOU_IMMJMP },
-	{ 0xFC1F0000, 0x04020000, XIT_BRANCH,		"BLTZL",	XOU_RS|XOU_IMMJMP },
-	{ 0xFC000000, 0x14000000, XIT_IMMEDIATE,	"BNE",		XOU_RS|XOU_RT|XOU_IMMJMP },
-	{ 0xFC000000, 0x54000000, XIT_IMMEDIATE,	"BNEL",		XOU_RS|XOU_RT|XOU_IMMJMP },
-	{ 0xFC00003F, 0x0000000D, XIT_SYS,			"BREAK",	XOU_CODE },
-	// CACHE
-	// CFCz
-	// COPz
-	// CTCz
-	// DADD - 64 bit
-	// DADDI - 64 bit
-	// DADDIU - 64 bit
-	// DADDU - 64 bit
-	// DDIV - 64 bit
-	// DDIVU - 64 bit
-	{ 0xFC00003F, 0x0000001A, XIT_SPECIAL,		"DIV",		XOU_RS|XOU_RT },
-	{ 0xFC00003F, 0x0000001B, XIT_SPECIAL,		"DIVU",		XOU_RS|XOU_RT },
-	// DMFC0 - 64 bit
-	// DMTC0 - 64 bit
-	// DMULT - 64 bit
-	// DMULTU - 64 bit
-	// DSLL - 64 bit
-	// DSLLV - 64 bit
-	// DSLL32 - 64 bit
-	// DSRA - 64 bit
-	// DSRAV - 64 bit
-	// DSRA32 - 64 bit
-	// DSRL - 64 bit
-	// DRSLV - 64 bit
-	// DSRL32 - 64 bit
-	// DSUB - 64 bit
-	// DSUBU - 64 bit
-	// ERET
-	{ 0xFC000000, 0x08000000, XIT_JUMP,			"J",		XOU_IMMJMP },
-	{ 0xFC000000, 0x0C000000, XIT_JUMP,			"JAL",		XOU_IMMJMP },
-	{ 0xFC00003F, 0x00000009, XIT_SPECIAL,		"JALR",		XOU_RS|XOU_RD },
-	{ 0xFC00003F, 0x00000008, XIT_SPECIAL,		"JR",		XOU_RS },
-	{ 0xFC000000, 0x80000000, XIT_IMMEDIATE,	"LB",		XOU_RSBASE|XOU_RT|XOU_IMM },
-	{ 0xFC000000, 0x90000000, XIT_IMMEDIATE,	"LBU",		XOU_RSBASE|XOU_RT|XOU_IMM },
-	// LD - 64 bit
-	// LDCz
-	// LDL - 64 bit
-	// LDR - 64 bit
-	{ 0xFC000000, 0x84000000, XIT_IMMEDIATE,	"LH",		XOU_RSBASE|XOU_RT|XOU_IMM },
-	{ 0xFC000000, 0x94000000, XIT_IMMEDIATE,	"LHU",		XOU_RSBASE|XOU_RT|XOU_IMM },
-	{ 0xFC000000, 0xC0000000, XIT_IMMEDIATE,	"LL",		XOU_RSBASE|XOU_RT|XOU_IMM },
-	// LLD - 64 bit
-	{ 0xFC000000, 0x3C000000, XIT_IMMEDIATE,	"LUI",		XOU_RT|XOU_IMM },
-	{ 0xFC000000, 0x8C000000, XIT_IMMEDIATE,	"LW",		XOU_RSBASE|XOU_RT|XOU_IMM },
-	// LWCz
-	{ 0xFC000000, 0x88000000, XIT_IMMEDIATE,	"LWL",		XOU_RSBASE|XOU_RT|XOU_IMM },
-	{ 0xFC000000, 0x98000000, XIT_IMMEDIATE,	"LWR",		XOU_RSBASE|XOU_RT|XOU_IMM },
-	{ 0xFC000000, 0x9C000000, XIT_IMMEDIATE,	"LWU",		XOU_RSBASE|XOU_RT|XOU_IMM },
-	// MFC0
-	// MFCz
-	{ 0xFC00003F, 0x00000010, XIT_SPECIAL,		"MFHI",		XOU_RD },
-	{ 0xFC00003F, 0x00000012, XIT_SPECIAL,		"MFLO",		XOU_RD },
-	// MTC0
-	// MTCz
-	{ 0xFC00003F, 0x00000011, XIT_SPECIAL,		"MTHI",		XOU_RS },
-	{ 0xFC00003F, 0x00000013, XIT_SPECIAL,		"MTLO",		XOU_RS },
-	{ 0xFC00003F, 0x00000018, XIT_SPECIAL,		"MULT",		XOU_RS|XOU_RT },
-	{ 0xFC00003F, 0x00000019, XIT_SPECIAL,		"MULTU",	XOU_RS|XOU_RT },
-	{ 0xFC00003F, 0x00000027, XIT_SPECIAL,		"NOR",		XOU_RS|XOU_RT|XOU_RD },
-	{ 0xFC00003F, 0x00000025, XIT_SPECIAL,		"OR",		XOU_RS|XOU_RT|XOU_RD },
-
-
-
-	{ 0xFC000000, 0xAC000000, XIT_IMMEDIATE,	"SW",		XOU_RSBASE|XOU_RT|XOU_IMM },
-	
-	
+static const mips_instruction_info g_pMipsInfo[] = {
+	{ ALGXINS_NOP         , 0xffffffff, 0x00000000, IFMT_NOPOP, "nop" }, 
+	{ ALGXINS_ADD         , 0xfc0007ff, 0x00000020, IFMT_ALREG, "add" }, 
+	{ ALGXINS_ADDI        , 0xfc000000, 0x20000000, IFMT_ALIMM, "addi" }, 
+	{ ALGXINS_ADDIU       , 0xfc000000, 0x24000000, IFMT_ALIMM, "addiu" }, 
+	{ ALGXINS_ADDU        , 0xfc0007ff, 0x00000021, IFMT_ALREG, "addu" }, 
+	{ ALGXINS_AND         , 0xfc0007ff, 0x00000024, IFMT_ALREG, "and" }, 
+	{ ALGXINS_ANDI        , 0xfc000000, 0x30000000, IFMT_ALIMM, "andi" }, 
+	{ ALGXINS_BEQ         , 0xfc000000, 0x10000000, IFMT_ALIMM, "beq" }, 
+	{ ALGXINS_BEQL        , 0xfc000000, 0x50000000, IFMT_ALIMM, "beql" }, 
+	{ ALGXINS_BGEZ        , 0xfc1f0000, 0x04010000, IFMT_ALIMM, "bgez" }, 
+	{ ALGXINS_BGEZAL      , 0xfc1f0000, 0x04110000, IFMT_ALIMM, "bgezal" }, 
+	{ ALGXINS_BGEZL       , 0xfc1f0000, 0x04030000, IFMT_ALIMM, "bgezl" }, 
+	{ ALGXINS_BGTZ        , 0xfc1f0000, 0x1c000000, IFMT_ALIMM, "bgtz" }, 
+	{ ALGXINS_BGTZL       , 0xfc1f0000, 0x5c000000, IFMT_ALIMM, "bgtzl" }, 
+	{ ALGXINS_BITREV      , 0xffe007ff, 0x7c000520, IFMT_ALREG, "bitrev" }, 
+	{ ALGXINS_BLEZ        , 0xfc1f0000, 0x18000000, IFMT_ALIMM, "blez" }, 
+	{ ALGXINS_BLEZL       , 0xfc1f0000, 0x58000000, IFMT_ALIMM, "blezl" }, 
+	{ ALGXINS_BLTZ        , 0xfc1f0000, 0x04000000, IFMT_ALIMM, "bltz" }, 
+	{ ALGXINS_BLTZAL      , 0xfc1f0000, 0x04100000, IFMT_ALIMM, "bltzal" }, 
+	{ ALGXINS_BLTZALL     , 0xfc1f0000, 0x04120000, IFMT_ALIMM, "bltzall" }, 
+	{ ALGXINS_BLTZL       , 0xfc1f0000, 0x04020000, IFMT_ALIMM, "bltzl" }, 
+	{ ALGXINS_BNE         , 0xfc000000, 0x14000000, IFMT_ALIMM, "bne" }, 
+	{ ALGXINS_BNEL        , 0xfc000000, 0x54000000, IFMT_ALIMM, "bnel" }, 
+	{ ALGXINS_BREAK       , 0xfc00003f, 0x0000000d, IFMT_ALSYS, "break" }, 
+	{ ALGXINS_CACHE       , 0xfc000000, 0xbc000000, IFMT_ALIMM, "cache" }, 
+	{ ALGXINS_CFC0        , 0xffe007ff, 0x40400000, IFMT_ALIMM, "cfc0" }, 
+	{ ALGXINS_CLO         , 0xfc1f07ff, 0x00000017, IFMT_ALREG, "clo" }, 
+	{ ALGXINS_CLZ         , 0xfc1f07ff, 0x00000016, IFMT_ALREG, "clz" }, 
+	{ ALGXINS_CTC0        , 0xffe007ff, 0x40c00000, IFMT_ALREG, "ctc0" }, 
+	{ ALGXINS_DBREAK      , 0xffffffff, 0x7000003f, IFMT_ALREG, "dbreak" }, 
+	{ ALGXINS_DIV         , 0xfc00ffff, 0x0000001a, IFMT_ALREG, "div" }, 
+	{ ALGXINS_DIVU        , 0xfc00ffff, 0x0000001b, IFMT_ALREG, "divu" }, 
+	{ ALGXINS_DRET        , 0xffffffff, 0x7000003e, IFMT_ALREG, "dret" }, 
+	{ ALGXINS_ERET        , 0xffffffff, 0x42000018, IFMT_ALREG, "eret" }, 
+	{ ALGXINS_EXT         , 0xfc00003f, 0x7c000000, IFMT_ALREG, "ext" }, 
+	{ ALGXINS_HALT        , 0xffffffff, 0x70000000, IFMT_ALREG, "halt" }, 
+	{ ALGXINS_INS         , 0xfc00003f, 0x7c000004, IFMT_ALREG, "ins" }, 
+	{ ALGXINS_J           , 0xfc000000, 0x08000000, IFMT_ALJMP, "j" }, 
+	{ ALGXINS_JAL         , 0xfc000000, 0x0c000000, IFMT_ALJMP, "jal" }, 
+	{ ALGXINS_JALR        , 0xfc1f07ff, 0x00000009, IFMT_ALREG, "jalr" }, 
+	{ ALGXINS_JR          , 0xfc1fffff, 0x00000008, IFMT_ALREG, "jr" }, 
+	{ ALGXINS_LB          , 0xfc000000, 0x80000000, IFMT_ALIMM, "lb" }, 
+	{ ALGXINS_LBU         , 0xfc000000, 0x90000000, IFMT_ALIMM, "lbu" }, 
+	{ ALGXINS_LH          , 0xfc000000, 0x84000000, IFMT_ALIMM, "lh" }, 
+	{ ALGXINS_LHU         , 0xfc000000, 0x94000000, IFMT_ALIMM, "lhu" }, 
+	{ ALGXINS_LL          , 0xfc000000, 0xc0000000, IFMT_ALIMM, "ll" }, 
+	{ ALGXINS_LUI         , 0xffe00000, 0x3c000000, IFMT_ALIMM, "lui" }, 
+	{ ALGXINS_LW          , 0xfc000000, 0x8c000000, IFMT_ALIMM, "lw" }, 
+	{ ALGXINS_LWL         , 0xfc000000, 0x88000000, IFMT_ALIMM, "lwl" }, 
+	{ ALGXINS_LWR         , 0xfc000000, 0x98000000, IFMT_ALIMM, "lwr" }, 
+	{ ALGXINS_MADD        , 0xfc00ffff, 0x0000001c, IFMT_ALREG, "madd" }, 
+	{ ALGXINS_MADDU       , 0xfc00ffff, 0x0000001d, IFMT_ALREG, "maddu" }, 
+	{ ALGXINS_MAX         , 0xfc0007ff, 0x0000002c, IFMT_ALREG, "max" }, 
+	{ ALGXINS_MFC0        , 0xffe007ff, 0x40000000, IFMT_ALREG, "mfc0" }, 
+	{ ALGXINS_MFDR        , 0xffe007ff, 0x7000003d, IFMT_ALREG, "mfdr" }, 
+	{ ALGXINS_MFHI        , 0xffff07ff, 0x00000010, IFMT_ALREG, "mfhi" }, 
+	{ ALGXINS_MFIC        , 0xffe007ff, 0x70000024, IFMT_ALREG, "mfic" }, 
+	{ ALGXINS_MFLO        , 0xffff07ff, 0x00000012, IFMT_ALREG, "mflo" }, 
+	{ ALGXINS_MIN         , 0xfc0007ff, 0x0000002d, IFMT_ALREG, "min" }, 
+	{ ALGXINS_MOVN        , 0xfc0007ff, 0x0000000b, IFMT_ALREG, "movn" }, 
+	{ ALGXINS_MOVZ        , 0xfc0007ff, 0x0000000a, IFMT_ALREG, "movz" }, 
+	{ ALGXINS_MSUB        , 0xfc00ffff, 0x0000002e, IFMT_ALREG, "msub" }, 
+	{ ALGXINS_MSUBU       , 0xfc00ffff, 0x0000002f, IFMT_ALREG, "msubu" }, 
+	{ ALGXINS_MTC0        , 0xffe007ff, 0x40800000, IFMT_ALREG, "mtc0" }, 
+	{ ALGXINS_MTDR        , 0xffe007ff, 0x7080003d, IFMT_ALREG, "mtdr" }, 
+	{ ALGXINS_MTHI        , 0xfc1fffff, 0x00000011, IFMT_ALREG, "mthi" }, 
+	{ ALGXINS_MTIC        , 0xffe007ff, 0x70000026, IFMT_ALREG, "mtic" }, 
+	{ ALGXINS_MTLO        , 0xfc1fffff, 0x00000013, IFMT_ALREG, "mtlo" }, 
+	{ ALGXINS_MULT        , 0xfc00ffff, 0x00000018, IFMT_ALREG, "mult" }, 
+	{ ALGXINS_MULTU       , 0xfc00ffff, 0x00000019, IFMT_ALREG, "multu" }, 
+	{ ALGXINS_NOR         , 0xfc0007ff, 0x00000027, IFMT_ALREG, "nor" }, 
+	{ ALGXINS_OR          , 0xfc0007ff, 0x00000025, IFMT_ALREG, "or" }, 
+	{ ALGXINS_ORI         , 0xfc000000, 0x34000000, IFMT_ALREG, "ori" }, 
+	{ ALGXINS_ROTR        , 0xffe0003f, 0x00200002, IFMT_ALREG, "rotr" }, 
+	{ ALGXINS_ROTRV       , 0xfc0007ff, 0x00000046, IFMT_ALREG, "rotrv" }, 
+	{ ALGXINS_SB          , 0xfc000000, 0xa0000000, IFMT_ALIMM, "sb" }, 
+	{ ALGXINS_SEB         , 0xffe007ff, 0x7c000420, IFMT_ALREG, "seb" }, 
+	{ ALGXINS_SEH         , 0xffe007ff, 0x7c000620, IFMT_ALREG, "seh" }, 
+	{ ALGXINS_SH          , 0xfc000000, 0xa4000000, IFMT_ALIMM, "sh" }, 
+	{ ALGXINS_SLL         , 0xffe0003f, 0x00000000, IFMT_ALREG, "sll" }, 
+	{ ALGXINS_SLLV        , 0xfc0007ff, 0x00000004, IFMT_ALREG, "sllv" }, 
+	{ ALGXINS_SLT         , 0xfc0007ff, 0x0000002a, IFMT_ALREG, "slt" }, 
+	{ ALGXINS_SLTI        , 0xfc000000, 0x28000000, IFMT_ALIMM, "slti" }, 
+	{ ALGXINS_SLTIU       , 0xfc000000, 0x2c000000, IFMT_ALIMM, "sltiu" }, 
+	{ ALGXINS_SLTU        , 0xfc0007ff, 0x0000002b, IFMT_ALREG, "sltu" }, 
+	{ ALGXINS_SRA         , 0xffe0003f, 0x00000003, IFMT_ALREG, "sra" }, 
+	{ ALGXINS_SRAV        , 0xfc0007ff, 0x00000007, IFMT_ALREG, "srav" }, 
+	{ ALGXINS_SRL         , 0xffe0003f, 0x00000002, IFMT_ALREG, "srl" }, 
+	{ ALGXINS_SRLV        , 0xfc0007ff, 0x00000006, IFMT_ALREG, "srlv" }, 
+	{ ALGXINS_SUB         , 0xfc0007ff, 0x00000022, IFMT_ALREG, "sub" }, 
+	{ ALGXINS_SUBU        , 0xfc0007ff, 0x00000023, IFMT_ALREG, "subu" }, 
+	{ ALGXINS_SW          , 0xfc000000, 0xac000000, IFMT_ALIMM, "sw" }, 
+	{ ALGXINS_SWL         , 0xfc000000, 0xa8000000, IFMT_ALIMM, "swl" }, 
+	{ ALGXINS_SWR         , 0xfc000000, 0xb8000000, IFMT_ALIMM, "swr" }, 
+	{ ALGXINS_SYNC        , 0xffffffff, 0x0000000f, IFMT_ALREG, "sync" }, 
+	{ ALGXINS_SYSCALL     , 0xfc00003f, 0x0000000c, IFMT_ALSYS, "syscall" }, 
+	{ ALGXINS_WSBH        , 0xffe007ff, 0x7c0000a0, IFMT_ALREG, "wsbh" }, 
+	{ ALGXINS_WSBW        , 0xffe007ff, 0x7c0000e0, IFMT_ALREG, "wsbw" }, 
+	{ ALGXINS_XOR         , 0xfc0007ff, 0x00000026, IFMT_ALREG, "xor" }, 
+	{ ALGXINS_XORI        , 0xfc000000, 0x38000000, IFMT_ALIMM, "xori" }, 
+	{ ALGXINS_ABS_S       , 0xffff003f, 0x46000005, IFMT_ALREG, "abs.s" }, 
+	{ ALGXINS_ADD_S       , 0xffe0003f, 0x46000000, IFMT_ALREG, "add.s" }, 
+	{ ALGXINS_BC1F        , 0xffff0000, 0x45000000, IFMT_ALIMM, "bc1f" }, 
+	{ ALGXINS_BC1FL       , 0xffff0000, 0x45020000, IFMT_ALIMM, "bc1fl" }, 
+	{ ALGXINS_BC1T        , 0xffff0000, 0x45010000, IFMT_ALIMM, "bc1t" }, 
+	{ ALGXINS_BC1TL       , 0xffff0000, 0x45030000, IFMT_ALIMM, "bc1tl" }, 
+	{ ALGXINS_C_EQ_S      , 0xffe007ff, 0x46000032, IFMT_ALREG, "c.eq.s" }, 
+	{ ALGXINS_C_F_S       , 0xffe007ff, 0x46000030, IFMT_ALREG, "c.f.s" }, 
+	{ ALGXINS_C_LE_S      , 0xffe007ff, 0x4600003e, IFMT_ALREG, "c.le.s" }, 
+	{ ALGXINS_C_LT_S      , 0xffe007ff, 0x4600003c, IFMT_ALREG, "c.lt.s" }, 
+	{ ALGXINS_C_NGE_S     , 0xffe007ff, 0x4600003d, IFMT_ALREG, "c.nge.s" }, 
+	{ ALGXINS_C_NGL_S     , 0xffe007ff, 0x4600003b, IFMT_ALREG, "c.ngl.s" }, 
+	{ ALGXINS_C_NGLE_S    , 0xffe007ff, 0x46000039, IFMT_ALREG, "c.ngle.s" }, 
+	{ ALGXINS_C_NGT_S     , 0xffe007ff, 0x4600003f, IFMT_ALREG, "c.ngt.s" }, 
+	{ ALGXINS_C_OLE_S     , 0xffe007ff, 0x46000036, IFMT_ALREG, "c.ole.s" }, 
+	{ ALGXINS_C_OLT_S     , 0xffe007ff, 0x46000034, IFMT_ALREG, "c.olt.s" }, 
+	{ ALGXINS_C_SEQ_S     , 0xffe007ff, 0x4600003a, IFMT_ALREG, "c.seq.s" }, 
+	{ ALGXINS_C_SF_S      , 0xffe007ff, 0x46000038, IFMT_ALREG, "c.sf.s" }, 
+	{ ALGXINS_C_UEQ_S     , 0xffe007ff, 0x46000033, IFMT_ALREG, "c.ueq.s" }, 
+	{ ALGXINS_C_ULE_S     , 0xffe007ff, 0x46000037, IFMT_ALREG, "c.ule.s" }, 
+	{ ALGXINS_C_ULT_S     , 0xffe007ff, 0x46000035, IFMT_ALREG, "c.ult.s" }, 
+	{ ALGXINS_C_UN_S      , 0xffe007ff, 0x46000031, IFMT_ALREG, "c.un.s" }, 
+	{ ALGXINS_CEIL_W_S    , 0xffff003f, 0x4600000e, IFMT_ALREG, "ceil.w.s" }, 
+	{ ALGXINS_CFC1        , 0xffe007ff, 0x44400000, IFMT_ALREG, "cfc1" }, 
+	{ ALGXINS_CTC1        , 0xffe007ff, 0x44c00000, IFMT_ALREG, "ctc1" }, 
+	{ ALGXINS_CVT_S_W     , 0xffff003f, 0x46800020, IFMT_ALREG, "cvt.s.w" }, 
+	{ ALGXINS_CVT_W_S     , 0xffff003f, 0x46000024, IFMT_ALREG, "cvt.w.s" }, 
+	{ ALGXINS_DIV_S       , 0xffe0003f, 0x46000003, IFMT_ALREG, "div.s" }, 
+	{ ALGXINS_FLOOR_W_S   , 0xffff003f, 0x4600000f, IFMT_ALREG, "floor.w.s" }, 
+	{ ALGXINS_LWC1        , 0xfc000000, 0xc4000000, IFMT_ALIMM, "lwc1" }, 
+	{ ALGXINS_MFC1        , 0xffe007ff, 0x44000000, IFMT_ALREG, "mfc1" }, 
+	{ ALGXINS_MOV_S       , 0xffff003f, 0x46000006, IFMT_ALREG, "mov.s" }, 
+	{ ALGXINS_MTC1        , 0xffe007ff, 0x44800000, IFMT_ALREG, "mtc1" }, 
+	{ ALGXINS_MUL_S       , 0xffe0003f, 0x46000002, IFMT_ALREG, "mul.s" }, 
+	{ ALGXINS_NEG_S       , 0xffff003f, 0x46000007, IFMT_ALREG, "neg.s" }, 
+	{ ALGXINS_ROUND_W_S   , 0xffff003f, 0x4600000c, IFMT_ALREG, "round.w.s" }, 
+	{ ALGXINS_SQRT_S      , 0xffff003f, 0x46000004, IFMT_ALREG, "sqrt.s" }, 
+	{ ALGXINS_SUB_S       , 0xffe0003f, 0x46000001, IFMT_ALREG, "sub.s" }, 
+	{ ALGXINS_SWC1        , 0xfc000000, 0xe4000000, IFMT_ALIMM, "swc1" }, 
+	{ ALGXINS_TRUNC_W_S   , 0xffff003f, 0x4600000d, IFMT_ALREG, "trunc.w.s" }, 
+	{ ALGXINS_BVF         , 0xffe30000, 0x49000000, IFMT_VPIM1, "bvf" }, 
+	{ ALGXINS_BVFL        , 0xffe30000, 0x49020000, IFMT_VPIM1, "bvfl" }, 
+	{ ALGXINS_BVT         , 0xffe30000, 0x49010000, IFMT_VPIM1, "bvt" }, 
+	{ ALGXINS_BVTL        , 0xffe30000, 0x49030000, IFMT_VPIM1, "bvtl" }, 
+	{ ALGXINS_LV_Q        , 0xfc000002, 0xd8000000, IFMT_VPIM2, "lv.q" }, 
+	{ ALGXINS_LV_S        , 0xfc000000, 0xc8000000, IFMT_VPIM3, "lv.s" }, 
+	{ ALGXINS_LVL_Q       , 0xfc000002, 0xd4000000, IFMT_VPIM2, "lvl.q" }, 
+	{ ALGXINS_LVR_Q       , 0xfc000002, 0xd4000002, IFMT_VPIM2, "lvr.q" }, 
+	{ ALGXINS_MFV         , 0xffe0ff80, 0x48600000, IFMT_VPRG1, "mfv" }, 
+	{ ALGXINS_MFVC        , 0xffe0ff80, 0x48600080, IFMT_VPRG1, "mfvc" }, 
+	{ ALGXINS_MFVME       , 0xfc000000, 0x68000000, IFMT_DUNNO, "mfvme" }, 
+	{ ALGXINS_MTV         , 0xffe0ff80, 0x48e00000, IFMT_VPRG1, "mtv" }, 
+	{ ALGXINS_MTVC        , 0xffe0ff80, 0x48e00080, IFMT_VPRG1, "mtvc" }, 
+	{ ALGXINS_MTVME       , 0xfc000000, 0xb0000000, IFMT_DUNNO, "mtvme" }, 
+	{ ALGXINS_SV_Q        , 0xfc000002, 0xf8000000, IFMT_VPIM2, "sv.q" }, 
+	{ ALGXINS_SV_S        , 0xfc000000, 0xe8000000, IFMT_VPIM3, "sv.s" }, 
+	{ ALGXINS_SVL_Q       , 0xfc000002, 0xf4000000, IFMT_VPIM2, "svl.q" }, 
+	{ ALGXINS_SVR_Q       , 0xfc000002, 0xf4000002, IFMT_VPIM2, "svr.q" }, 
+	{ ALGXINS_VABS        , 0xffff0000, 0xd0010000, IFMT_VPRG2, "vabs" }, 
+	{ ALGXINS_VADD        , 0xff800000, 0x60000000, IFMT_VPRG2, "vadd" }, 
+	{ ALGXINS_VASIN       , 0xffff0000, 0xd0170000, IFMT_VPRG2, "vasin" }, 
+	{ ALGXINS_VAVG        , 0xffff0000, 0xd0470000, IFMT_VPRG2, "vavg" }, 
+	{ ALGXINS_VBFY1       , 0xffff0000, 0xd0420000, IFMT_VPRG2, "vbfy1" }, 
+	{ ALGXINS_VBFY2       , 0xffff0000, 0xd0430000, IFMT_VPRG2, "vbfy2" }, 
+	{ ALGXINS_VCMOVF      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vcmovf" }, 
+	{ ALGXINS_VCMOVT      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vcmovt" }, 
+	{ ALGXINS_VCMP        , 0x00000000, 0xffffffff, IFMT_DUNNO, "vcmp" }, 
+	{ ALGXINS_VCOS        , 0x00000000, 0xffffffff, IFMT_DUNNO, "vcos" }, 
+	{ ALGXINS_VCRS_T      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vcrs.t" }, 
+	{ ALGXINS_VCRSP_T     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vcrsp.t" }, 
+	{ ALGXINS_VCST        , 0x00000000, 0xffffffff, IFMT_DUNNO, "vcst" }, 
+	{ ALGXINS_VDET_P      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vdet.p" }, 
+	{ ALGXINS_VDIV        , 0x00000000, 0xffffffff, IFMT_DUNNO, "vdiv" }, 
+	{ ALGXINS_VDOT        , 0x00000000, 0xffffffff, IFMT_DUNNO, "vdot" }, 
+	{ ALGXINS_VEXP2_P     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vexp2.p" }, 
+	{ ALGXINS_VEXP2_Q     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vexp2.q" }, 
+	{ ALGXINS_VEXP2_S     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vexp2.s" }, 
+	{ ALGXINS_VEXP2_T     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vexp2.t" }, 
+	{ ALGXINS_VF2H_P      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vf2h.p" }, 
+	{ ALGXINS_VF2H_Q      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vf2h.q" }, 
+	{ ALGXINS_VF2ID_P     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vf2id.p" }, 
+	{ ALGXINS_VF2ID_Q     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vf2id.q" }, 
+	{ ALGXINS_VF2ID_S     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vf2id.s" }, 
+	{ ALGXINS_VF2ID_T     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vf2id.t" }, 
+	{ ALGXINS_VF2IN_P     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vf2in.p" }, 
+	{ ALGXINS_VF2IN_Q     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vf2in.q" }, 
+	{ ALGXINS_VF2IN_S     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vf2in.s" }, 
+	{ ALGXINS_VF2IN_T     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vf2in.t" }, 
+	{ ALGXINS_VF2IU_P     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vf2iu.p" }, 
+	{ ALGXINS_VF2IU_Q     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vf2iu.q" }, 
+	{ ALGXINS_VF2IU_S     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vf2iu.s" }, 
+	{ ALGXINS_VF2IU_T     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vf2iu.t" }, 
+	{ ALGXINS_VF2IZ_P     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vf2iz.p" }, 
+	{ ALGXINS_VF2IZ_Q     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vf2iz.q" }, 
+	{ ALGXINS_VF2IZ_S     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vf2iz.s" }, 
+	{ ALGXINS_VF2IZ_T     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vf2iz.t" }, 
+	{ ALGXINS_VFAD_P      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vfad.p" }, 
+	{ ALGXINS_VFAD_Q      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vfad.q" }, 
+	{ ALGXINS_VFAD_T      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vfad.t" }, 
+	{ ALGXINS_VFIM_S      , 0xff800000, 0xdf800000, IFMT_DUNNO, "vfim.s" }, 
+	{ ALGXINS_VFLUSH      , 0xffffffff, 0xffff040d, IFMT_DUNNO, "vflush" }, 
+	{ ALGXINS_VH2F_P      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vh2f.p" }, 
+	{ ALGXINS_VH2F_S      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vh2f.s" }, 
+	{ ALGXINS_VHDP_P      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vhdp.p" }, 
+	{ ALGXINS_VHDP_Q      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vhdp.q" }, 
+	{ ALGXINS_VHDP_T      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vhdp.t" }, 
+	{ ALGXINS_VHTFM2_P    , 0x00000000, 0xffffffff, IFMT_DUNNO, "vhtfm2.p" }, 
+	{ ALGXINS_VHTFM3_T    , 0x00000000, 0xffffffff, IFMT_DUNNO, "vhtfm3.t" }, 
+	{ ALGXINS_VHTFM4_Q    , 0x00000000, 0xffffffff, IFMT_DUNNO, "vhtfm4.q" }, 
+	{ ALGXINS_VI2C_Q      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vi2c.q" }, 
+	{ ALGXINS_VI2F_P      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vi2f.p" }, 
+	{ ALGXINS_VI2F_Q      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vi2f.q" }, 
+	{ ALGXINS_VI2F_S      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vi2f.s" }, 
+	{ ALGXINS_VI2F_T      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vi2f.t" }, 
+	{ ALGXINS_VI2S_P      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vi2s.p" }, 
+	{ ALGXINS_VI2S_Q      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vi2s.q" }, 
+	{ ALGXINS_VI2UC_Q     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vi2uc.q" }, 
+	{ ALGXINS_VI2US_P     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vi2us.p" }, 
+	{ ALGXINS_VI2US_Q     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vi2us.q" }, 
+	{ ALGXINS_VIDT_P      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vidt.p" }, 
+	{ ALGXINS_VIDT_Q      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vidt.q" }, 
+	{ ALGXINS_VIIM_S      , 0xff800000, 0xdf000000, IFMT_VPIM5, "viim.s" }, 
+	{ ALGXINS_VLGB_S      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vlgb.s" }, 
+	{ ALGXINS_VLOG2_P     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vlog2.p" }, 
+	{ ALGXINS_VLOG2_Q     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vlog2.q" }, 
+	{ ALGXINS_VLOG2_S     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vlog2.s" }, 
+	{ ALGXINS_VLOG2_T     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vlog2.t" }, 
+	{ ALGXINS_VMAX_P      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmax.p" }, 
+	{ ALGXINS_VMAX_Q      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmax.q" }, 
+	{ ALGXINS_VMAX_S      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmax.s" }, 
+	{ ALGXINS_VMAX_T      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmax.t" }, 
+	{ ALGXINS_VMFVC       , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmfvc" }, 
+	{ ALGXINS_VMIDT_P     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmidt.p" }, 
+	{ ALGXINS_VMIDT_Q     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmidt.q" }, 
+	{ ALGXINS_VMIDT_T     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmidt.t" }, 
+	{ ALGXINS_VMIN_P      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmin.p" }, 
+	{ ALGXINS_VMIN_Q      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmin.q" }, 
+	{ ALGXINS_VMIN_S      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmin.s" }, 
+	{ ALGXINS_VMIN_T      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmin.t" }, 
+	{ ALGXINS_VMMOV_P     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmmov.p" }, 
+	{ ALGXINS_VMMOV_Q     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmmov.q" }, 
+	{ ALGXINS_VMMOV_T     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmmov.t" }, 
+	{ ALGXINS_VMMUL_P     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmmul.p" }, 
+	{ ALGXINS_VMMUL_Q     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmmul.q" }, 
+	{ ALGXINS_VMMUL_T     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmmul.t" }, 
+	{ ALGXINS_VMONE_P     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmone.p" }, 
+	{ ALGXINS_VMONE_Q     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmone.q" }, 
+	{ ALGXINS_VMONE_T     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmone.t" }, 
+	{ ALGXINS_VMOV_P      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmov.p" }, 
+	{ ALGXINS_VMOV_Q      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmov.q" }, 
+	{ ALGXINS_VMOV_S      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmov.s" }, 
+	{ ALGXINS_VMOV_T      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmov.t" }, 
+	{ ALGXINS_VMSCL_P     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmscl.p" }, 
+	{ ALGXINS_VMSCL_Q     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmscl.q" }, 
+	{ ALGXINS_VMSCL_T     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmscl.t" }, 
+	{ ALGXINS_VMTVC       , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmtvc" }, 
+	{ ALGXINS_VMUL_P      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmul.p" }, 
+	{ ALGXINS_VMUL_Q      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmul.q" }, 
+	{ ALGXINS_VMUL_S      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmul.s" }, 
+	{ ALGXINS_VMUL_T      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmul.t" }, 
+	{ ALGXINS_VMZERO_P    , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmzero.p" }, 
+	{ ALGXINS_VMZERO_Q    , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmzero.q" }, 
+	{ ALGXINS_VMZERO_T    , 0x00000000, 0xffffffff, IFMT_DUNNO, "vmzero.t" }, 
+	{ ALGXINS_VNEG_P      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vneg.p" }, 
+	{ ALGXINS_VNEG_Q      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vneg.q" }, 
+	{ ALGXINS_VNEG_S      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vneg.s" }, 
+	{ ALGXINS_VNEG_T      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vneg.t" }, 
+	{ ALGXINS_VNOP        , 0xffffffff, 0xffff0000, IFMT_NOPOP, "vnop" }, 
+	{ ALGXINS_VNRCP_P     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vnrcp.p" }, 
+	{ ALGXINS_VNRCP_Q     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vnrcp.q" }, 
+	{ ALGXINS_VNRCP_S     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vnrcp.s" }, 
+	{ ALGXINS_VNRCP_T     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vnrcp.t" }, 
+	{ ALGXINS_VNSIN_P     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vnsin.p" }, 
+	{ ALGXINS_VNSIN_Q     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vnsin.q" }, 
+	{ ALGXINS_VNSIN_S     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vnsin.s" }, 
+	{ ALGXINS_VNSIN_T     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vnsin.t" }, 
+	{ ALGXINS_VOCP_P      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vocp.p" }, 
+	{ ALGXINS_VOCP_Q      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vocp.q" }, 
+	{ ALGXINS_VOCP_S      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vocp.s" }, 
+	{ ALGXINS_VOCP_T      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vocp.t" }, 
+	{ ALGXINS_VONE        , 0xffff7f00, 0xd0070000, IFMT_VPRG1, "vone" }, 
+	{ ALGXINS_VPFXD       , 0xff000000, 0xde000000, IFMT_DUNNO, "vpfxd" }, 
+	{ ALGXINS_VPFXS       , 0xff000000, 0xdc000000, IFMT_DUNNO, "vpfxs" }, 
+	{ ALGXINS_VPFXT       , 0xff000000, 0xdd000000, IFMT_DUNNO, "vpfxt" }, 
+	{ ALGXINS_VQMUL       , 0xff800000, 0xf2800000, IFMT_VPRG1, "vqmul" }, 
+	{ ALGXINS_VRCP        , 0xffff0000, 0xd0100000, IFMT_VPRG1, "vrcp" }, 
+	{ ALGXINS_VREXP2_P    , 0x00000000, 0xffffffff, IFMT_DUNNO, "vrexp2.p" }, 
+	{ ALGXINS_VREXP2_Q    , 0x00000000, 0xffffffff, IFMT_DUNNO, "vrexp2.q" }, 
+	{ ALGXINS_VREXP2_S    , 0x00000000, 0xffffffff, IFMT_DUNNO, "vrexp2.s" }, 
+	{ ALGXINS_VREXP2_T    , 0x00000000, 0xffffffff, IFMT_DUNNO, "vrexp2.t" }, 
+	{ ALGXINS_VRNDF1_P    , 0x00000000, 0xffffffff, IFMT_DUNNO, "vrndf1.p" }, 
+	{ ALGXINS_VRNDF1_Q    , 0x00000000, 0xffffffff, IFMT_DUNNO, "vrndf1.q" }, 
+	{ ALGXINS_VRNDF1_S    , 0x00000000, 0xffffffff, IFMT_DUNNO, "vrndf1.s" }, 
+	{ ALGXINS_VRNDF1_T    , 0x00000000, 0xffffffff, IFMT_DUNNO, "vrndf1.t" }, 
+	{ ALGXINS_VRNDF2_P    , 0x00000000, 0xffffffff, IFMT_DUNNO, "vrndf2.p" }, 
+	{ ALGXINS_VRNDF2_Q    , 0x00000000, 0xffffffff, IFMT_DUNNO, "vrndf2.q" }, 
+	{ ALGXINS_VRNDF2_S    , 0x00000000, 0xffffffff, IFMT_DUNNO, "vrndf2.s" }, 
+	{ ALGXINS_VRNDF2_T    , 0x00000000, 0xffffffff, IFMT_DUNNO, "vrndf2.t" }, 
+	{ ALGXINS_VRNDI_P     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vrndi.p" }, 
+	{ ALGXINS_VRNDI_Q     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vrndi.q" }, 
+	{ ALGXINS_VRNDI_S     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vrndi.s" }, 
+	{ ALGXINS_VRNDI_T     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vrndi.t" }, 
+	{ ALGXINS_VRNDS_S     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vrnds.s" }, 
+	{ ALGXINS_VROT_P      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vrot.p" }, 
+	{ ALGXINS_VROT_Q      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vrot.q" }, 
+	{ ALGXINS_VROT_T      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vrot.t" }, 
+	{ ALGXINS_VRSQ_P      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vrsq.p" }, 
+	{ ALGXINS_VRSQ_Q      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vrsq.q" }, 
+	{ ALGXINS_VRSQ_S      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vrsq.s" }, 
+	{ ALGXINS_VRSQ_T      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vrsq.t" }, 
+	{ ALGXINS_VS2I_P      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vs2i.p" }, 
+	{ ALGXINS_VS2I_S      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vs2i.s" }, 
+	{ ALGXINS_VSAT0_P     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsat0.p" }, 
+	{ ALGXINS_VSAT0_Q     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsat0.q" }, 
+	{ ALGXINS_VSAT0_S     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsat0.s" }, 
+	{ ALGXINS_VSAT0_T     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsat0.t" }, 
+	{ ALGXINS_VSAT1_P     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsat1.p" }, 
+	{ ALGXINS_VSAT1_Q     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsat1.q" }, 
+	{ ALGXINS_VSAT1_S     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsat1.s" }, 
+	{ ALGXINS_VSAT1_T     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsat1.t" }, 
+	{ ALGXINS_VSBN_S      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsbn.s" }, 
+	{ ALGXINS_VSBZ_S      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsbz.s" }, 
+	{ ALGXINS_VSCL_P      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vscl.p" }, 
+	{ ALGXINS_VSCL_Q      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vscl.q" }, 
+	{ ALGXINS_VSCL_T      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vscl.t" }, 
+	{ ALGXINS_VSCMP_P     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vscmp.p" }, 
+	{ ALGXINS_VSCMP_Q     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vscmp.q" }, 
+	{ ALGXINS_VSCMP_S     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vscmp.s" }, 
+	{ ALGXINS_VSCMP_T     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vscmp.t" }, 
+	{ ALGXINS_VSGE_P      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsge.p" }, 
+	{ ALGXINS_VSGE_Q      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsge.q" }, 
+	{ ALGXINS_VSGE_S      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsge.s" }, 
+	{ ALGXINS_VSGE_T      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsge.t" }, 
+	{ ALGXINS_VSGN_P      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsgn.p" }, 
+	{ ALGXINS_VSGN_Q      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsgn.q" }, 
+	{ ALGXINS_VSGN_S      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsgn.s" }, 
+	{ ALGXINS_VSGN_T      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsgn.t" }, 
+	{ ALGXINS_VSIN_P      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsin.p" }, 
+	{ ALGXINS_VSIN_Q      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsin.q" }, 
+	{ ALGXINS_VSIN_S      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsin.s" }, 
+	{ ALGXINS_VSIN_T      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsin.t" }, 
+	{ ALGXINS_VSLT_P      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vslt.p" }, 
+	{ ALGXINS_VSLT_Q      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vslt.q" }, 
+	{ ALGXINS_VSLT_S      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vslt.s" }, 
+	{ ALGXINS_VSLT_T      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vslt.t" }, 
+	{ ALGXINS_VSOCP_P     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsocp.p" }, 
+	{ ALGXINS_VSOCP_S     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsocp.s" }, 
+	{ ALGXINS_VSQRT_P     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsqrt.p" }, 
+	{ ALGXINS_VSQRT_Q     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsqrt.q" }, 
+	{ ALGXINS_VSQRT_S     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsqrt.s" }, 
+	{ ALGXINS_VSQRT_T     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsqrt.t" }, 
+	{ ALGXINS_VSRT1_Q     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsrt1.q" }, 
+	{ ALGXINS_VSRT2_Q     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsrt2.q" }, 
+	{ ALGXINS_VSRT3_Q     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsrt3.q" }, 
+	{ ALGXINS_VSRT4_Q     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsrt4.q" }, 
+	{ ALGXINS_VSUB_P      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsub.p" }, 
+	{ ALGXINS_VSUB_Q      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsub.q" }, 
+	{ ALGXINS_VSUB_S      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsub.s" }, 
+	{ ALGXINS_VSUB_T      , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsub.t" }, 
+	{ ALGXINS_VSYNC       , 0x00000000, 0xffffffff, IFMT_DUNNO, "vsync" }, 
+	{ ALGXINS_VT4444_Q    , 0x00000000, 0xffffffff, IFMT_DUNNO, "vt4444.q" }, 
+	{ ALGXINS_VT5551_Q    , 0x00000000, 0xffffffff, IFMT_DUNNO, "vt5551.q" }, 
+	{ ALGXINS_VT5650_Q    , 0x00000000, 0xffffffff, IFMT_DUNNO, "vt5650.q" }, 
+	{ ALGXINS_VTFM2_P     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vtfm2.p" }, 
+	{ ALGXINS_VTFM3_T     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vtfm3.t" }, 
+	{ ALGXINS_VTFM4_Q     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vtfm4.q" }, 
+	{ ALGXINS_VUS2I_P     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vus2i.p" }, 
+	{ ALGXINS_VUS2I_S     , 0x00000000, 0xffffffff, IFMT_DUNNO, "vus2i.s" }, 
+	{ ALGXINS_VWB_Q       , 0xfc000002, 0xf8000002, IFMT_VPIM2, "vwb.q" }, 
+	{ ALGXINS_VWBN_S      , 0xff008080, 0xd3000000, IFMT_VPIM4, "vwbn.s" }, 
+	{ ALGXINS_VZERO       , 0xffff7f00, 0xd0060000, IFMT_VPRG1, "vzero" }
 };
-static const unsigned int g_iNumMipsInst = sizeof(g_xMipsIns) / sizeof(g_xMipsIns[0]);
+static const int g_iNumMipsInfo = 371;
 
-const mips_instruction& mdDisassemble( unsigned int inst )
+const mips_instruction_info* mdDisassemble( unsigned int inst )
 {
-	for( int i = 0; i < g_iNumMipsInst; ++i ) {
-		const mips_instruction& cmp_inst = g_xMipsIns[i];
+	for( int i = 0; i < g_iNumMipsInfo; ++i ) {
+		const mips_instruction_info& cmp_inst = g_pMipsInfo[i];
 		unsigned int uMaskedIns = inst & cmp_inst.mask;
-		if( uMaskedIns == cmp_inst.compare ) {
-			return cmp_inst;
+		if( uMaskedIns == cmp_inst.cmp ) {
+			return &cmp_inst;
 		}
 	}
-	return g_xUnknownIns;
-}
-
-void mdPrint( const mips_instruction& ins_data, unsigned int inst, unsigned int loc )
-{
-	printf( "[%08x:%08x] ", loc, inst );
-	if( ins_data.type == XIT_IMMEDIATE ) {
-		mips_opcode_imm* dinst = (mips_opcode_imm*)&inst;
-		if( ins_data.opusage == (XOU_RT|XOU_RS|XOU_IMM) ) {
-			printf( "%s $%s,$%s,%d\n", ins_data.name, REG_NAME[dinst->rt], REG_NAME[dinst->rs], dinst->simm );
-		} else if( ins_data.opusage == (XOU_RSBASE|XOU_RT|XOU_IMM) ) {
-			printf( "%s $%s,%d($%s)\n", ins_data.name, REG_NAME[dinst->rt], dinst->simm, REG_NAME[dinst->rs] );
-		} else if( ins_data.opusage == (XOU_RT|XOU_IMM) ) {
-			printf( "%s $%s,%d\n", ins_data.name, REG_NAME[dinst->rt], dinst->simm );
-		} else if( ins_data.opusage == (XOU_RT|XOU_RS|XOU_IMMJMP) ) {
-			printf( "%s $%s,$%s,%08x\n", ins_data.name, REG_NAME[dinst->rt], REG_NAME[dinst->rs], loc+4+(dinst->simm<<2) );
-		} else {
-			printf( "%s - Unknown Decoding\n", ins_data.name );
-		}
-	} else if( ins_data.type == XIT_SPECIAL ) {
-		mips_opcode_sp* dinst = (mips_opcode_sp*)&inst;
-		if( ins_data.opusage == (XOU_RS|XOU_RT|XOU_RD) ) {
-			printf( "%s $%s,$%s,$%s\n", ins_data.name, REG_NAME[dinst->rd], REG_NAME[dinst->rs], REG_NAME[dinst->rt] );
-		} else if( ins_data.opusage == (XOU_RS) ) {
-			printf( "%s $%s\n", ins_data.name, REG_NAME[dinst->rs] );
-		} else {
-			printf( "%s - Unknown Decoding\n", ins_data.name );
-		}
-	} else if( ins_data.type == XIT_JUMP ) {
-		mips_opcode_jmp* dinst = (mips_opcode_jmp*)&inst;
-		if( ins_data.opusage == (XOU_IMMJMP) ) {
-			printf( "%s %08x\n", ins_data.name, dinst->imm << 2 );
-		} else {
-			printf( "%s - Unknown Decoding\n", ins_data.name );
-		}
-	} else if( ins_data.type == XIT_NOP ) {
-		printf( "NOP\n" );
-	} else if( ins_data.type == XIT_UNKNOWN ) {
-		printf( "Unknown Instruction\n", inst );
-	}
+	return nullptr;
 }

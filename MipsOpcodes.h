@@ -72,6 +72,16 @@ struct mips_opcode_sp
 	unsigned int op : 6;
 };
 
+struct mips_opcode_psp
+{
+	unsigned int spop : 6;
+	unsigned int spopx : 5;
+	unsigned int rd : 5;
+	unsigned int rt : 5;
+	unsigned int rs : 5;
+	unsigned int op : 6;
+};
+
 struct mips_opcode_sys
 {
 	unsigned int spop : 6;
