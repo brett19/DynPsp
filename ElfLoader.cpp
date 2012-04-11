@@ -72,6 +72,8 @@ bool elfLoad( FILE *fh )
 						int x : 16;
 					} *pRel = (relHelper*)pmPtr( g_uiBaseAddress + rel.mOffset );
 					pRel->address += g_uiBaseAddress && 0xFFFF;
+				} else if( rel.mType == 7 ) {
+					// Silenced for now!
 				} else {
 					printf( "Relocation %d - Unknown Type %d\n", j, rel.mType );
 				}

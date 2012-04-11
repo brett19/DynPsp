@@ -48,7 +48,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;ASMJIT_API=;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -74,6 +74,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AsmJit\AssemblerX86X64.cpp" />
+    <ClCompile Include="AsmJit\CodeGenerator.cpp" />
+    <ClCompile Include="AsmJit\Compiler.cpp" />
+    <ClCompile Include="AsmJit\CompilerX86X64.cpp" />
+    <ClCompile Include="AsmJit\CpuInfo.cpp" />
+    <ClCompile Include="AsmJit\Defs.cpp" />
+    <ClCompile Include="AsmJit\DefsX86X64.cpp" />
+    <ClCompile Include="AsmJit\Logger.cpp" />
+    <ClCompile Include="AsmJit\MemoryManager.cpp" />
+    <ClCompile Include="AsmJit\MemoryMarker.cpp" />
+    <ClCompile Include="AsmJit\OperandX86X64.cpp" />
+    <ClCompile Include="AsmJit\Platform.cpp" />
+    <ClCompile Include="AsmJit\Util.cpp" />
     <ClCompile Include="DynarecContext.cpp" />
     <ClCompile Include="DynarecExec.cpp" />
     <ClCompile Include="DynPsp.cpp" />
@@ -82,6 +95,27 @@
     <ClCompile Include="pspMemory.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AsmJit\ApiBegin.h" />
+    <ClInclude Include="AsmJit\ApiEnd.h" />
+    <ClInclude Include="AsmJit\AsmJit.h" />
+    <ClInclude Include="AsmJit\Assembler.h" />
+    <ClInclude Include="AsmJit\AssemblerX86X64.h" />
+    <ClInclude Include="AsmJit\Build.h" />
+    <ClInclude Include="AsmJit\CodeGenerator.h" />
+    <ClInclude Include="AsmJit\Compiler.h" />
+    <ClInclude Include="AsmJit\CompilerX86X64.h" />
+    <ClInclude Include="AsmJit\Config.h" />
+    <ClInclude Include="AsmJit\CpuInfo.h" />
+    <ClInclude Include="AsmJit\Defs.h" />
+    <ClInclude Include="AsmJit\DefsX86X64.h" />
+    <ClInclude Include="AsmJit\Logger.h" />
+    <ClInclude Include="AsmJit\MemoryManager.h" />
+    <ClInclude Include="AsmJit\MemoryMarker.h" />
+    <ClInclude Include="AsmJit\Operand.h" />
+    <ClInclude Include="AsmJit\OperandX86X64.h" />
+    <ClInclude Include="AsmJit\Platform.h" />
+    <ClInclude Include="AsmJit\Util.h" />
+    <ClInclude Include="AsmJit\Util_p.h" />
     <ClInclude Include="DynarecContext.hpp" />
     <ClInclude Include="DynarecExec.hpp" />
     <ClInclude Include="ElfHeaders.h" />
@@ -90,6 +124,9 @@
     <ClInclude Include="MipsOpcodes.h" />
     <ClInclude Include="pspMemory.hpp" />
     <ClInclude Include="X86Assembler.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="AsmJit\Regenerate.py" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

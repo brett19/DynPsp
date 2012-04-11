@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="AsmJit">
+      <UniqueIdentifier>{9ef54ca5-4aa3-41cd-a625-b3235b37cf2a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DynPsp.cpp">
@@ -32,6 +35,45 @@
     </ClCompile>
     <ClCompile Include="DynarecExec.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AsmJit\AssemblerX86X64.cpp">
+      <Filter>AsmJit</Filter>
+    </ClCompile>
+    <ClCompile Include="AsmJit\CodeGenerator.cpp">
+      <Filter>AsmJit</Filter>
+    </ClCompile>
+    <ClCompile Include="AsmJit\Compiler.cpp">
+      <Filter>AsmJit</Filter>
+    </ClCompile>
+    <ClCompile Include="AsmJit\CompilerX86X64.cpp">
+      <Filter>AsmJit</Filter>
+    </ClCompile>
+    <ClCompile Include="AsmJit\CpuInfo.cpp">
+      <Filter>AsmJit</Filter>
+    </ClCompile>
+    <ClCompile Include="AsmJit\Defs.cpp">
+      <Filter>AsmJit</Filter>
+    </ClCompile>
+    <ClCompile Include="AsmJit\DefsX86X64.cpp">
+      <Filter>AsmJit</Filter>
+    </ClCompile>
+    <ClCompile Include="AsmJit\Logger.cpp">
+      <Filter>AsmJit</Filter>
+    </ClCompile>
+    <ClCompile Include="AsmJit\MemoryManager.cpp">
+      <Filter>AsmJit</Filter>
+    </ClCompile>
+    <ClCompile Include="AsmJit\MemoryMarker.cpp">
+      <Filter>AsmJit</Filter>
+    </ClCompile>
+    <ClCompile Include="AsmJit\OperandX86X64.cpp">
+      <Filter>AsmJit</Filter>
+    </ClCompile>
+    <ClCompile Include="AsmJit\Platform.cpp">
+      <Filter>AsmJit</Filter>
+    </ClCompile>
+    <ClCompile Include="AsmJit\Util.cpp">
+      <Filter>AsmJit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -59,5 +101,73 @@
     <ClInclude Include="X86Assembler.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AsmJit\ApiEnd.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\AsmJit.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\Assembler.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\AssemblerX86X64.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\Build.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\CodeGenerator.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\Compiler.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\CompilerX86X64.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\Config.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\CpuInfo.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\Defs.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\DefsX86X64.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\Logger.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\MemoryManager.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\MemoryMarker.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\Operand.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\OperandX86X64.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\Platform.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\Util.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\Util_p.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+    <ClInclude Include="AsmJit\ApiBegin.h">
+      <Filter>AsmJit</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="AsmJit\Regenerate.py">
+      <Filter>AsmJit</Filter>
+    </None>
   </ItemGroup>
 </Project>

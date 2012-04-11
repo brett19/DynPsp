@@ -24,27 +24,29 @@ void esDestroy( dynarec_state *&state )
 	}
 }
 
-dynarec_context * ecCreate( dynarec_state *state )
+dynarec_context * ecCreate( dynarec_state *state, unsigned int stacksize )
 {
 	dynarec_context *context = (dynarec_context*)malloc( sizeof(dynarec_context) );
 	if( context ) {
 		context->state = state;
+		context->stack = pmHeapAlloc( stacksize );
 
-		for( int i = 0; i < 34; ++i ) {
+		for( int i = 0; i < 35; ++i ) {
 			context->regs[i] = 0xBAADF00D;
 		}
-		context->regs[0] = 0x00000000;
+		context->regs[PREG_ZR] = 0x00000000;
+		context->regs[PREG_SP] = context->stack->start;
 
-		context->starttransmem = (unsigned char*)VirtualAlloc( 0, 0x2000, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE );
-		context->transmem = context->starttransmem;
-
-		context->assembler = new X86Assembler( context->transmem, 0x2000 );
+		context->asmblr = new AsmJit::Assembler( );
+		context->labels = nullptr;
+		context->delayslotlabel = nullptr;
 	}
 	return context;
 }
 
 void ecDestroy( dynarec_context *&context )
 {
+	pmHeapFree( context->stack );
 	free( context );
 	context = nullptr;
 }

@@ -3,33 +3,16 @@
 #pragma pack(push)
 #pragma pack(1)
 
-struct mips_opcode_jmp
+struct mips_opcode_alimm
 {
 	union
 	{
 		struct
 		{
-			unsigned int imm : 26;
-			unsigned int op : 6;
-		};
-		struct
-		{
-			int simm : 26;
-			int sop : 6;
-		};
-	};
-};
-
-struct mips_opcode_imm
-{
-	union
-	{
-		struct
-		{
-			unsigned int imm : 16;
-			unsigned int rt : 5;
-			unsigned int rs : 5;
-			unsigned int op : 6;
+			unsigned int uimm : 16;
+			unsigned int urt : 5;
+			unsigned int urs : 5;
+			unsigned int uop : 6;
 		};
 		struct
 		{
@@ -41,52 +24,50 @@ struct mips_opcode_imm
 	};
 };
 
-struct mips_opcode_br
+struct mips_opcode_alreg
+{
+	unsigned int uspop : 6;
+	unsigned int usa : 5;
+	unsigned int urd : 5;
+	unsigned int urt : 5;
+	unsigned int urs : 5;
+	unsigned int uop : 6;
+};
+
+struct mips_opcode_alsys
+{
+	unsigned int uspop : 6;
+	unsigned int ucode : 20;
+	unsigned int uop : 6;
+};
+
+struct mips_opcode_aljmp
 {
 	union
 	{
 		struct
 		{
-			unsigned int imm : 16;
-			unsigned int brop : 5;
-			unsigned int rs : 5;
-			unsigned int op : 6;
+			unsigned int uimm : 26;
+			unsigned int uop : 6;
 		};
 		struct
 		{
-			int simm : 16;
-			int sbrop : 5;
-			int srs : 5;
+			int simm : 26;
 			int sop : 6;
 		};
 	};
 };
 
-struct mips_opcode_sp
+struct mips_opcode
 {
-	unsigned int spop : 6;
-	unsigned int sa : 5;
-	unsigned int rd : 5;
-	unsigned int rt : 5;
-	unsigned int rs : 5;
-	unsigned int op : 6;
-};
-
-struct mips_opcode_psp
-{
-	unsigned int spop : 6;
-	unsigned int spopx : 5;
-	unsigned int rd : 5;
-	unsigned int rt : 5;
-	unsigned int rs : 5;
-	unsigned int op : 6;
-};
-
-struct mips_opcode_sys
-{
-	unsigned int spop : 6;
-	unsigned int code : 20;
-	unsigned int op : 6;
+	mips_opcode( unsigned int _val ) : val( _val ) { }
+	union {
+		unsigned int val;
+		mips_opcode_alimm alimm;
+		mips_opcode_alreg alreg;
+		mips_opcode_alsys alsys;
+		mips_opcode_aljmp aljmp;
+	};
 };
 
 #pragma pack(pop)

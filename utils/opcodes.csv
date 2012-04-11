@@ -1,0 +1,170 @@
+nop	|000000:00000:00000:00000:00000:000000	|SPECIAL:::::SLL
+add	|000000:rs:rt:rd:00000:100000		|SPECIAL:::::ADD
+addi	|001000:rs:rt:imm16			|ADDI:::
+addiu	|001001:rs:rt:imm16			|ADDIU:::
+sub	|000000:rs:rt:rd:00000:100010		|SPECIAL:::::SUB
+subu	|000000:rs:rt:rd:00000:100011		|SPECIAL:::::SUBU
+
+and	|000000:rs:rt:rd:00000:100100		|SPECIAL:::::AND
+andi	|001100:rs:rt:imm16			|ANDI:::
+nor	|000000:rs:rt:rd:00000:100111		|SPECIAL:::::NOR
+or	|000000:rs:rt:rd:00000:100101		|SPECIAL:::::OR
+ori	|001101:rs:rt:imm16			|ORI:::
+xor	|000000:rs:rt:rd:00000:100110		|SPECIAL:::::XOR
+xori	|001110:rs:rt:imm16			|XORI:::
+
+sll	|000000:00000:rt:rd:sa:000000		|SPECIAL:::::SLL
+sllv	|000000:rs:rt:rd:00000:000100		|SPECIAL:::::SLLV
+sra	|000000:00000:rt:rd:sa:000011		|SPECIAL:::::SRA
+srav	|000000:rs:rt:rd:00000:000111		|SPECIAL:::::SRAV
+srl	|000000:0000:0:rt:rd:sa:000010		|SPECIAL::R::::SRL
+srlv	|000000:rs:rt:rd:0000:0:000110		|SPECIAL:::::R:SRLV
+rotr	|000000:0000:1:rt:rd:sa:000010		|SPECIAL::R::::SRL
+rotrv	|000000:rs:rt:rd:00001:000110		|SPECIAL:::::R:SRLV
+
+slt	|000000:rs:rt:rd:00000:101010		|SPECIAL::::SLT
+slti	|001010:rs:rt:imm16			|SLTI:::
+sltu	|000000:rs:rt:rd:00000:101011		|SPECIAL::::SLTU
+sltiu	|001011:rs:rt:imm16			|SLTIU:::
+
+lui	|001111:00000:rt:imm16			|LUI:::
+
+seb	|011111:00000:rt:rd:10000:100000	|SPECIAL3::::SEB:BSHFL
+seh	|011111:00000:rt:rd:10100:100000	|SPECIAL3::::SEH:BSHFL
+
+bitrev	|011111:00000:rt:rd:10100:100000	|SPECIAL3::::BITREV:BSHFL
+
+max	|000000:rs:rt:rd:00000:101100		|SPECIAL:::::MAX
+min	|000000:rs:rt:rd:00000:101101		|SPECIAL:::::MIN
+
+div	|000000:rs:rt:00000:00000:011010	|SPECIAL:::::DIV
+divu	|000000:rs:rt:00000:00000:011011	|SPECIAL:::::DIVU
+
+mult	|000000:rs:rt:00000:00000:011000	|SPECIAL:::::MULT
+multu	|000000:rs:rt:00000:00000:011001	|SPECIAL:::::MULTU
+
+madd	|000000:rs:rt:00000:00000:011100	|SPECIAL:::::MADD
+maddu	|000000:rs:rt:00000:00000:011101	|SPECIAL:::::MADDU
+msub	|000000:rs:rt:00000:00000:101110	|SPECIAL:::::MSUB
+msubu	|000000:rs:rt:00000:00000:101111	|SPECIAL:::::MSUBU
+
+movz	|000000:rs:rt:rd:00000:001010		|SPECIAL:::::MOVZ
+movn	|000000:rs:rt:rd:00000:001011		|SPECIAL:::::MOVN
+
+ext	|011111:rs:rt:msb:lsb:000000		|SPECIAL3:::::INS
+ins	|011111:rs:rt:msb:lsb:000100		|SPECIAL3:::::EXT
+
+clz	|000000:rs:00000:rd:00000:010110	|SPECIAL:::::CLZ
+clo	|000000:rs:00000:rd:00000:010111	|SPECIAL:::::CLO
+
+wsbh	|011111:00000:rt:rd:00010:100000	|SPECIAL3::::WSBH:BSHFL
+wsbw	|011111:00000:rt:rd:00011:100000	|SPECIAL3::::WSBW:BSHFL
+
+
+beq	|000100:rs:rt:off16			|BEQ:::
+beql	|010100:rs:rt:off16			|BEQL:::
+
+bgez	|000001:rs:00001:off16			|REGIMM::BGEZ:
+bgezl	|000001:rs:00011:off16			|REGIMM::BGEZL:
+bgezal	|000001:rs:10001:off16			|REGIMM::BGEZAL:
+bgezall	|000001:rs:10011:off16			|REGIMM::BGEZALL:
+
+bltz	|000001:rs:00000:off16			|REGIMM::BLTZ:
+bltzl	|000001:rs:00010:off16			|REGIMM::BLTZL:
+bltzal	|000001:rs:10000:off16			|REGIMM::BLTZAL:
+bltzall	|000001:rs:10010:off16			|REGIMM::BLTZALL:
+
+blez	|000110:rs:00000:off16			|BLEZ:::
+blezl	|010110:rs:00000:off16			|BLEZL:::
+
+bgtz	|000111:rs:00000:off16			|BGTZ:::
+bgtzl	|010111:rs:00000:off16			|BGTZL:::
+
+bne	|000101:rs:rt:off16			|BNE:::
+bnel	|010101:rs:rt:off16			|BNEL:::
+
+j	|000010:imm26				|J:
+jr	|000000:rs:00000:00000:00000:001000	|SPECIAL::::JR
+jalr	|000000:rs:00000:rd:00000:001001	|SPECIAL::::JALR
+jal	|000011:imm26				|JAL:
+
+bc1f	|010001:01000:000:0:0:off16		|COP1:BC::nd:tf:
+bc1t	|010001:01000:000:0:1:off16		|COP1:BC::nd:tf:
+bc1fl	|010001:01000:000:1:0:off16		|COP1:BC::nd:tf:
+bc1tl	|010001:01000:000:1:1:off16		|COP1:BC::nd:tf:
+
+
+lb	|100000:base:rt:off16			|LB:::
+lh	|100001:base:rt:off16			|LH:::
+lw	|100011:base:rt:off16			|LW:::
+lwl	|100010:base:rt:off16			|LWL:::
+lwr	|100110:base:rt:off16			|LWR:::
+lbu	|100100:base:rt:off16			|LBU:::
+lhu	|100101:base:rt:off16			|LHU:::
+
+sb	|101000:base:rt:off16			|SB:::
+sh	|101001:base:rt:off16			|SH:::			
+sw	|101011:base:rt:off16			|SW:::
+swl	|101010:base:rt:off16			|SWL:::
+swr	|101110:base:rt:off16			|SWR:::
+
+ll	|110000:base:rt:off16			|LL:::
+sc	|111000:base:rt:off16			|SC:::
+
+lwc1	|110001:base:ft:off16			|LWC1:::
+swc1	|111001:base:ft:off16			
+
+
+
+add.s	|010001:10000:ft:fs:fd:000000		|COP1:::::ADD
+sub.s	|010001:10000:ft:fs:fd:000001		|COP1:::::SUB
+mul.s	|010001:10000:ft:fs:fd:000010		|COP1:::::MUL
+div.s	|010001:10000:ft:fs:fd:000011		|COP1:::::DIV
+
+sqrt.s		|010001:10000:00000:fs:fd:000100	|COP1:::::SQRT
+abs.s		|010001:10000:00000:fs:fd:000101	|COP1:::::ABS
+mov.s		|010001:10000:00000:fs:fd:000110	|COP1:::::MOV
+neg.s		|010001:10000:00000:fs:fd:000111	|COP1:::::NEG
+round.w.s	|010001:10000:00000:fs:fd:001100	|COP1:::::ROUND.W
+trunc.w.s	|010001:10000:00000:fs:fd:001101	|COP1:::::TRUNC.W
+ceil.w.s	|010001:10000:00000:fs:fd:001110	|COP1:::::CEIL.W
+floor.w.s	|010001:10000:00000:fs:fd:001111	|COP1:::::FLOOR.W
+
+cvt.s.w		|010001:10100:00000:fs:fd:100000	|COP1:::::CVT.S
+cvt.w.s		|010001:10000:00000:fs:fd:100100	|COP1:::::CVT.W
+
+mfc1		|010001:00000:rt:fs:00000:000000	|COP1:MF::::
+mtc1		|010001:00100:rt:fs:00000:000000	|COP1:MT::::
+
+cfc1		|010001:00010:rt:fs:00000:000000	|COP1:CF::::
+ctc1		|010001:00110:rt:fs:00000:000000	|COP1:CT::::
+
+c.f.s		|010001:10000:ft:fs:000:0:0:11:0000	|COP1::::::A:FC:cond
+c.un.s		|010001:10000:ft:fs:000:0:0:11:0001	|COP1::::::A:FC:cond
+c.eq.s		|010001:10000:ft:fs:000:0:0:11:0010	|COP1::::::A:FC:cond
+c.ueq.s		|010001:10000:ft:fs:000:0:0:11:0011	|COP1::::::A:FC:cond
+c.olt.s		|010001:10000:ft:fs:000:0:0:11:0100	|COP1::::::A:FC:cond
+c.ult.s		|010001:10000:ft:fs:000:0:0:11:0101	|COP1::::::A:FC:cond
+c.ole.s		|010001:10000:ft:fs:000:0:0:11:0110	|COP1::::::A:FC:cond
+c.ule.s		|010001:10000:ft:fs:000:0:0:11:0111	|COP1::::::A:FC:cond
+c.sf.s		|010001:10000:ft:fs:000:0:0:11:1000	|COP1::::::A:FC:cond
+c.ngle.s	|010001:10000:ft:fs:000:0:0:11:1001	|COP1::::::A:FC:cond
+c.seq.s		|010001:10000:ft:fs:000:0:0:11:1010	|COP1::::::A:FC:cond
+c.ngl.s		|010001:10000:ft:fs:000:0:0:11:1011	|COP1::::::A:FC:cond
+c.lt.s		|010001:10000:ft:fs:000:0:0:11:1100	|COP1::::::A:FC:cond
+c.nge.s		|010001:10000:ft:fs:000:0:0:11:1101	|COP1::::::A:FC:cond
+c.le.s		|010001:10000:ft:fs:000:0:0:11:1110	|COP1::::::A:FC:cond
+c.ngt.s		|010001:10000:ft:fs:000:0:0:11:1111	|COP1::::::A:FC:cond
+
+
+
+
+
+
+
+
+
+
+
+
+
